@@ -4,7 +4,7 @@
 #
 Name     : sbc
 Version  : 1.3
-Release  : 1
+Release  : 2
 URL      : https://www.kernel.org/pub/linux/bluetooth/sbc-1.3.tar.xz
 Source0  : https://www.kernel.org/pub/linux/bluetooth/sbc-1.3.tar.xz
 Summary  : SBC library
@@ -12,6 +12,12 @@ Group    : Development/Tools
 License  : GPL-2.0 LGPL-2.1
 Requires: sbc-bin
 Requires: sbc-lib
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
+BuildRequires : pkgconfig(32sndfile)
 BuildRequires : pkgconfig(sndfile)
 
 %description
@@ -39,6 +45,17 @@ Provides: sbc-devel
 dev components for the sbc package.
 
 
+%package dev32
+Summary: dev32 components for the sbc package.
+Group: Default
+Requires: sbc-lib32
+Requires: sbc-bin
+Requires: sbc-dev
+
+%description dev32
+dev32 components for the sbc package.
+
+
 %package lib
 Summary: lib components for the sbc package.
 Group: Libraries
@@ -47,15 +64,34 @@ Group: Libraries
 lib components for the sbc package.
 
 
+%package lib32
+Summary: lib32 components for the sbc package.
+Group: Default
+
+%description lib32
+lib32 components for the sbc package.
+
+
 %prep
 %setup -q -n sbc-1.3
+pushd ..
+cp -a sbc-1.3 build32
+popd
 
 %build
 export LANG=C
-export SOURCE_DATE_EPOCH=1492044224
+export SOURCE_DATE_EPOCH=1492045449
 %configure --disable-static
 make V=1  %{?_smp_mflags}
 
+pushd ../build32/
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export CFLAGS="$CFLAGS -m32"
+export CXXFLAGS="$CXXFLAGS -m32"
+export LDFLAGS="$LDFLAGS -m32"
+%configure --disable-static    --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
+make V=1  %{?_smp_mflags}
+popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
@@ -64,8 +100,17 @@ export no_proxy=localhost
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1492044224
+export SOURCE_DATE_EPOCH=1492045449
 rm -rf %{buildroot}
+pushd ../build32/
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
+popd
+fi
+popd
 %make_install
 
 %files
@@ -83,7 +128,18 @@ rm -rf %{buildroot}
 /usr/lib64/libsbc.so
 /usr/lib64/pkgconfig/sbc.pc
 
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libsbc.so
+/usr/lib32/pkgconfig/32sbc.pc
+/usr/lib32/pkgconfig/sbc.pc
+
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libsbc.so.1
 /usr/lib64/libsbc.so.1.2.1
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libsbc.so.1
+/usr/lib32/libsbc.so.1.2.1
