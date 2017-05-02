@@ -4,7 +4,7 @@
 #
 Name     : sbc
 Version  : 1.3
-Release  : 2
+Release  : 3
 URL      : https://www.kernel.org/pub/linux/bluetooth/sbc-1.3.tar.xz
 Source0  : https://www.kernel.org/pub/linux/bluetooth/sbc-1.3.tar.xz
 Summary  : SBC library
