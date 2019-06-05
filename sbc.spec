@@ -4,7 +4,7 @@
 #
 Name     : sbc
 Version  : 1.4
-Release  : 6
+Release  : 7
 URL      : https://www.kernel.org/pub/linux/bluetooth/sbc-1.4.tar.xz
 Source0  : https://www.kernel.org/pub/linux/bluetooth/sbc-1.4.tar.xz
 Summary  : SBC library
