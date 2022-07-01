@@ -1,5 +1,5 @@
 PKG_NAME := sbc
-URL = https://www.kernel.org/pub/linux/bluetooth/sbc-1.5.tar.xz
+URL = https://www.kernel.org/pub/linux/bluetooth/sbc-2.0.tar.xz
 ARCHIVES = 
 
 include ../common/Makefile.common
